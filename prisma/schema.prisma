@@ -1,0 +1,99 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id   String @id @default(uuid())
+  name String
+  email String @unique
+  password String
+  cargo String
+  categoria String
+  loja String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @map("updated_at")
+  chamados Chamados[]
+  tokenResetPassword TokenResetPassword[]
+  
+  @@map("users")
+}
+
+model Analista {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String
+  categoria String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @map("updated_at")
+  chamados Chamados[]
+
+  @@map("analistas")
+}
+
+model Chamados {
+  id String @id @default(uuid())
+  loja String
+  prioridade String
+  tipoChamado String @map("tipo_chamado")
+  title String
+  descricao String
+  descricaoEncerramento String @map("descricao_encerramento")
+  descricaoCancelamento String @map("descricao_cancelamento")
+  telefone String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @map("updated_at")
+  userId String @map("user_id")
+  analistaId String? @map("analista_id")
+  anexos Anexos[]
+
+  user User @relation(fields: [userId], references: [id])
+  analista Analista? @relation(fields: [analistaId], references: [id])
+
+  @@map("chamados")
+}
+
+model AtualizacaoChamado {
+  id String @id @default(uuid())
+  descricao String
+  chamadoId String? @map("chamado_id")
+  userId String? @map("user_id")
+  analistaId String? @map("analista_id")
+  anexos Anexos []
+
+  @@map("atualizacao_chamado")
+} 
+
+model Anexos {
+  id String @id @default(uuid())
+  title String
+  link String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @map("updated_at")
+  chamadoId String? @map("chamado_id")
+  atualizacaoChamadoId String? @map("atualizacao_chamado_id")
+
+  chamados Chamados? @relation(fields: [chamadoId], references: [id])
+
+  atualizacao_chamado AtualizacaoChamado? @relation(fields: [atualizacaoChamadoId], references: [id])
+
+  @@map("anexos")
+}
+
+
+
+model TokenResetPassword {
+  id String @id @default(uuid())
+  token String @unique
+  userId String @unique
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("token_reset_password")
+}

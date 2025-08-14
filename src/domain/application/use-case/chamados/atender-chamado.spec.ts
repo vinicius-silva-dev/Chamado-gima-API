@@ -1,0 +1,109 @@
+import { InMemoryChamado } from 'test/repository/in-memory-chamado';
+import { describe, test, expect, beforeEach } from 'vitest';
+import { AtenderChamadoUseCase } from './atender-chamado';
+import { User } from 'src/domain/enteprise/entities/user';
+import { Analista } from 'src/domain/enteprise/entities/analistas';
+import { Chamado } from 'src/domain/enteprise/entities/chamado';
+import { StatusValueObject } from 'src/domain/enteprise/entities/value-object/status';
+import { InMemoryUser } from 'test/repository/in-memory-user';
+import { InMemoryAnalista } from 'test/repository/in-memory-analista';
+import { UniqueEntityId } from 'src/core/entities/unique-entity-id';
+import { NotAllowedError } from 'src/core/errors/errors/not-allowerd-error';
+import { InMemoryAnexos } from 'test/repository/in-memory-anexos';
+import { InMemoryChamadoAnexos } from 'test/repository/in-memory-chamado-anexos';
+
+
+let inMemoryChamado: InMemoryChamado
+let inMemoryChamadoAnexos: InMemoryChamadoAnexos
+let inMemoryAnexos: InMemoryAnexos
+let inMemoryAnalista: InMemoryAnalista
+let sut: AtenderChamadoUseCase
+describe('Atender chamado', async () => {
+  beforeEach(() => {
+    inMemoryChamadoAnexos = new InMemoryChamadoAnexos()
+    inMemoryAnexos = new InMemoryAnexos()
+    inMemoryChamado = new InMemoryChamado(inMemoryChamadoAnexos, inMemoryAnexos);
+    inMemoryAnalista = new InMemoryAnalista()
+    sut = new AtenderChamadoUseCase(inMemoryChamado, inMemoryAnalista)
+  });
+
+  test('should be abble answer a chamado.', async () => {
+    const user = await User.create({
+      name: 'Vinicius Silva',
+      email: 'vinicius100@live.com',
+      password: '123456',
+      cargo: 'aux.TI',
+      categoria: 'Usuário Padrão',
+      loja: 'Gima FL Jaru'
+    })
+
+    const analista = await Analista.create({
+      name: 'Vinicius Silva',
+      email: 'vinicius100@live.com',
+      password: '123456',
+      categoria: 'Analista'
+    })
+
+    await inMemoryAnalista.create(analista)
+
+    const chamado = await Chamado.create({
+      userId: user.id,
+      loja: 'Gima FL Jaru',
+      prioridade: 'Medio',
+      tipo_chamado: 'incidente',
+      status: new StatusValueObject(),
+      atualizacaoChamado: [],
+      title: 'Chamado de teste.',
+      descricao: 'Essa descição é apenas um teste.',
+      telefone: 69992115445,
+    }, new UniqueEntityId('chamado-1'))
+
+    await inMemoryChamado.create(chamado)
+    
+    
+    await sut.excecute({
+      id: new UniqueEntityId('chamado-1'),
+      analistaId: analista.id.toString(),
+      status: 'Atendimento'
+    })
+
+    expect(inMemoryChamado.items[0]).toMatchObject({
+      status: new StatusValueObject('Atendimento') 
+    })
+  })
+
+  test('should not be abble answer a chamado.', async () => {
+    const user = await User.create({
+      name: 'Vinicius Silva',
+      email: 'vinicius100@live.com',
+      password: '123456',
+      cargo: 'aux.TI',
+      categoria: 'Usuário Padrão',
+      loja: 'Gima FL Jaru'
+    })
+
+    const chamado = await Chamado.create({
+      userId: user.id,
+      loja: 'Gima FL Jaru',
+      prioridade: 'Medio',
+      tipo_chamado: 'incidente',
+      status: new StatusValueObject(),
+      atualizacaoChamado: [],
+      title: 'Chamado de teste.',
+      descricao: 'Essa descição é apenas um teste.',
+      telefone: 69992115445,
+    }, new UniqueEntityId('chamado-1'))
+
+    await inMemoryChamado.create(chamado)
+    // console.log(inMemoryChamado.items[0])
+    
+    const reusult = await sut.excecute({
+      id: new UniqueEntityId('chamado-1'),
+      analistaId: user.id.toString(),
+      status: 'Atendimento'
+    })
+    
+    expect(reusult.isLeft()).toBe(true)
+    expect(reusult.value).toBeInstanceOf(NotAllowedError)
+  });
+});

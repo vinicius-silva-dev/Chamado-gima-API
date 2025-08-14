@@ -1,0 +1,85 @@
+import {Test} from '@nestjs/testing'
+import { INestApplication } from "@nestjs/common";
+import { PrismaService } from "src/infra/database/prisma/prisma.service";
+import { beforeAll, describe, test } from "vitest";
+import { AppModule } from 'src/app.module';
+import { DatabaseModule } from 'src/infra/database/database.module';
+import request from 'supertest'
+// import { StatusValueObject } from 'src/domain/enteprise/entities/value-object/status';
+import { UserFactory } from 'test/factory/make-user';
+import { AnexosFactory } from 'test/factory/make-anexos';
+import { hash } from 'bcrypt';
+
+describe('Create chamado e2e', () => {
+  let app: INestApplication
+  let prisma: PrismaService
+  let userFactory: UserFactory
+  let anexosFactory: AnexosFactory
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule, DatabaseModule],
+      providers: [UserFactory, AnexosFactory]
+    }).compile()
+
+    app = moduleRef.createNestApplication()
+
+    prisma = moduleRef.get(PrismaService)
+    userFactory = moduleRef.get(UserFactory)
+    anexosFactory = moduleRef.get(AnexosFactory)
+
+    await app.init()
+  })
+  test('[POST] should be able to create a chamado!', async () => {
+    // const user = await userFactory.makePrismaUser()
+    const user = await prisma.user.create({
+      data: {
+          name: 'Osvaldo Silva',
+          email: 'osvaldo100@live.com',
+          password: await hash('123456', 6),
+          cargo: 'aux.financeiro',
+          categoria: 'Padrão',
+          loja: 'Gima FL Jaru',
+          createdAt: new Date(),
+        }
+    })
+    console.log('user: ',user)
+    const anexos1 = await anexosFactory.makePrismaAnexos()
+    const anexos2 = await anexosFactory.makePrismaAnexos()
+
+    await request(app.getHttpServer()).post('/createchamado').send({
+      userId: user.id,
+      loja: 'Gima FL Jaru',
+      prioridade: 'Medio',
+      tipoChamado: 'Erro no sistema',
+      status: 'aberto',
+      title: 'Chamado de teste.',
+      descricao: 'Essa descição é apenas um teste.',
+      anexos: [
+        anexos1.id,
+        anexos2.id
+      ],
+      telefone: '69992115445',
+    })
+
+    // const anexos = await prisma.$queryRaw` SELECT * FROM Anexos INNER JOIN Chamados ON Anexos.id = Chamados.anexos`
+    
+    const chamadoOnDatabase = await prisma.chamados.findFirst({
+      where: {
+        userId: user.id
+      }
+    })
+    console.log('chamadoOnDatabase: ', chamadoOnDatabase)
+    expect(chamadoOnDatabase).toBeTruthy()
+
+    // const anexosOnDatabase = await prisma.anexos.findMany({
+    //   where: {
+    //     chamadoId: chamadoOnDatabase?.id
+    //   }
+    // })
+
+    // expect(anexosOnDatabase).toHaveLength(2)
+    // expect(
+    //   await prisma.$queryRaw` SELECT * FROM Anexos INNER JOIN Chamados ON Anexos.id = Chamados.anexos`
+    // )
+  })
+})
