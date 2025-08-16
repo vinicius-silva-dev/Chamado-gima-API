@@ -13,13 +13,14 @@ const emailZod = z.object({
 
 type Auth = z.infer<typeof emailZod>
 
-@Controller('/resetpassword')
+@Controller('/sendmail')
 export class SendCodeForTheEmailController {
   constructor(
     private readonly sendEmail: SendEmail,
     private tokenResetPasswordUseCase: CreateTokenResetPasswordUseCase,
     private userRepository: UserRepository
   ) {}
+  
   @Post()
   @UsePipes(new ZodValidationPipe(emailZod))
   async sendCode(@Body() body: Auth) {
@@ -46,7 +47,6 @@ export class SendCodeForTheEmailController {
           userId: user.id.toString()
         })
       }
-      console.log(sendEmail)
       
        return sendEmail
 

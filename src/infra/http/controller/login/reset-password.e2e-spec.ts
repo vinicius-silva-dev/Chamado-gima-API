@@ -46,6 +46,6 @@ describe('Reset password e2e', () => {
       password: '413380vss'
     })
 
-    expect(result.statusCode).toBe(200)
+    expect(result.statusCode).toBe(201)
   })
 })

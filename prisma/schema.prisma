@@ -44,9 +44,10 @@ model Chamados {
   tipoChamado String @map("tipo_chamado")
   title String
   descricao String
-  descricaoEncerramento String @map("descricao_encerramento")
-  descricaoCancelamento String @map("descricao_cancelamento")
+  descricaoEncerramento String? @map("descricao_encerramento")
+  descricaoCancelamento String? @map("descricao_cancelamento")
   telefone String
+  status String? @default("aberto")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime? @default(now()) @map("updated_at")
   userId String @map("user_id")
@@ -91,7 +92,7 @@ model Anexos {
 model TokenResetPassword {
   id String @id @default(uuid())
   token String @unique
-  userId String @unique
+  userId String  // precisa remover esse unique
 
   user User @relation(fields: [userId], references: [id])
 

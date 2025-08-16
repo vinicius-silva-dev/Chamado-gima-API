@@ -16,7 +16,7 @@ export class ResetPasswordController {
   constructor(private resetPasswordUseCase: ResetPasswordUseCase) {}
 
   @Post()
-  @HttpCode(204)
+  @HttpCode(201)
   @UsePipes(new ZodValidationPipe(envShema))
   async sendCode(@Body() body: User) {
     const { email, token, password } = body;
@@ -30,5 +30,7 @@ export class ResetPasswordController {
     if (!result) {
       throw new Error();
     }
+     console.log(result.value)
+    return result
   }
 }
