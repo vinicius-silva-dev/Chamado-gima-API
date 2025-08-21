@@ -1,6 +1,6 @@
-import { Body, Controller, HttpCode, Post } from "@nestjs/common";
-import { UniqueEntityId } from "src/core/entities/unique-entity-id";
-import { CreateAnexosUseCase } from "src/domain/application/use-case/chamados/create-anexos";
+import { Body, Controller, HttpCode, Param, Post } from "@nestjs/common";
+// import { UniqueEntityId } from "src/core/entities/unique-entity-id";
+// import { CreateAnexosUseCase } from "src/domain/application/use-case/chamados/create-anexos";
 import { CreateChamadoUseCase } from "src/domain/application/use-case/chamados/create-chamado";
 import { StatusValueObject } from "src/domain/enteprise/entities/value-object/status";
 
@@ -38,19 +38,21 @@ const envSchema = z.object({
 
 type Chamado = z.infer<typeof envSchema>
 
-@Controller('/createchamado')
+@Controller('/createchamado/:userId')
 export class CreateChamadoController {
   constructor (
     private createChamadoUseCase: CreateChamadoUseCase,
-    private createAnexosUseCase: CreateAnexosUseCase
+    // private createAnexosUseCase: CreateAnexosUseCase
   ) {}
 
   @Post()
   @HttpCode(201)
-  async createChamado(@Body() body: Chamado) {
+  async createChamado(
+    @Param('userId') userId: string,
+    @Body() body: Chamado
+  ) {
     try {
       const {
-        userId,
         loja,
         prioridade,
         tipoChamado,
@@ -63,7 +65,7 @@ export class CreateChamadoController {
   
       // console.log(body)
       await this.createChamadoUseCase.excecute({
-        userId: userId,
+        userId,
         loja,
         prioridade,
         tipo_chamado: tipoChamado,

@@ -9,7 +9,7 @@ import { UserFactory } from 'test/factory/make-user';
 import { AnexosFactory } from 'test/factory/make-anexos';
 import { hash } from 'bcrypt';
 
-describe('List chamado e2e', () => {
+describe('Close chamado e2e', () => {
   let app: INestApplication
   let prisma: PrismaService
 
@@ -25,7 +25,7 @@ describe('List chamado e2e', () => {
 
     await app.init()
   })
-  test('[POST] should be able to list chamado!', async () => {
+  test('[Put] should be able to close a chamado!', async () => {
     // const user = await userFactory.makePrismaUser()
     const user = await prisma.user.create({
       data: {
@@ -38,8 +38,18 @@ describe('List chamado e2e', () => {
           createdAt: new Date(),
         }
     })
+
+    const analista = await prisma.analista.create({
+      data: {
+          name: 'Osvaldo Silva',
+          email: 'osvaldo100@live.com',
+          password: await hash('123456', 6),
+          categoria: 'Padrão',
+          createdAt: new Date(),
+        }
+    })
     
-    await prisma.chamados.create({
+    const chamado = await prisma.chamados.create({
       data: {
         userId: user.id,
         loja: 'Gima FL Jaru',
@@ -53,37 +63,21 @@ describe('List chamado e2e', () => {
       }
     })
 
-    await prisma.chamados.create({
-      data: {
-        userId: user.id,
-        loja: 'Gima FL Jaru',
-        prioridade: 'Medio',
-        tipoChamado: 'Erro no sistema 2',
-        title: 'Chamado de teste 2.',
-        descricao: 'Essa descição é apenas um teste 2.',
-        descricaoEncerramento: '',
-        descricaoCancelamento: '',
-        telefone: '69992115445',
-      }
-    })
 
-    await request(app.getHttpServer()).get(`/listchamados/${user.id}`)
+    const result = await request(app.getHttpServer()).put(`/encerrarchamado/${chamado.id}/${analista.id}`).send({
+      descricaoEncerramento: "Este chamado esta sendo encerrado com a autorização do usuário, pois, o caso foi resolvido.",
+      status: 'Encerrado'
+    })
     
-    const chamadoOnDatabase = await prisma.chamados.findMany({
+    const chamadoOnDatabase = await prisma.chamados.findFirst({
       where: {
-        userId: user.id
+        id: chamado.id
       }
     })
-    console.log('chamadoOnDatabase: ', chamadoOnDatabase)
 
-    expect(chamadoOnDatabase).toEqual([
-      expect.objectContaining({
-        tipoChamado: 'Erro no sistema',
-      }),
-      expect.objectContaining({
-        tipoChamado: 'Erro no sistema 2',
-      }),
-    ])
+    expect(chamadoOnDatabase?.descricaoEncerramento).toEqual(
+      "Este chamado esta sendo encerrado com a autorização do usuário, pois, o caso foi resolvido."
+    )
 
    
   })

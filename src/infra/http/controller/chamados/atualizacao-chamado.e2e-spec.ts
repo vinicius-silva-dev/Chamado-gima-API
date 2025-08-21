@@ -9,9 +9,10 @@ import { UserFactory } from 'test/factory/make-user';
 import { AnexosFactory } from 'test/factory/make-anexos';
 import { hash } from 'bcrypt';
 
-describe('List chamado e2e', () => {
+describe('Update chamado e2e', () => {
   let app: INestApplication
   let prisma: PrismaService
+  let anexosFactory: AnexosFactory
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -22,10 +23,10 @@ describe('List chamado e2e', () => {
     app = moduleRef.createNestApplication()
 
     prisma = moduleRef.get(PrismaService)
-
+    anexosFactory = moduleRef.get(AnexosFactory)
     await app.init()
   })
-  test('[POST] should be able to list chamado!', async () => {
+  test('[Put] should be able to update a chamado!', async () => {
     // const user = await userFactory.makePrismaUser()
     const user = await prisma.user.create({
       data: {
@@ -38,8 +39,21 @@ describe('List chamado e2e', () => {
           createdAt: new Date(),
         }
     })
+
+    const anexos1 = await anexosFactory.makePrismaAnexos()
+    const anexos2 = await anexosFactory.makePrismaAnexos()
+
+    // const analista = await prisma.analista.create({
+    //   data: {
+    //       name: 'Maria Silva',
+    //       email: 'mari100@live.com',
+    //       password: await hash('123456', 6),
+    //       categoria: 'Analista',
+    //       createdAt: new Date(),
+    //     }
+    // })
     
-    await prisma.chamados.create({
+    const chamado = await prisma.chamados.create({
       data: {
         userId: user.id,
         loja: 'Gima FL Jaru',
@@ -53,38 +67,23 @@ describe('List chamado e2e', () => {
       }
     })
 
-    await prisma.chamados.create({
-      data: {
-        userId: user.id,
-        loja: 'Gima FL Jaru',
-        prioridade: 'Medio',
-        tipoChamado: 'Erro no sistema 2',
-        title: 'Chamado de teste 2.',
-        descricao: 'Essa descição é apenas um teste 2.',
-        descricaoEncerramento: '',
-        descricaoCancelamento: '',
-        telefone: '69992115445',
-      }
+    await request(app.getHttpServer()).post(`/atualizacaochamado/${chamado.id}/${user.id}`).send({
+      descricao: "Este chamado esta recebendo atualização com a autorização do usuário, pois, o caso foi resolvido.",
+      anexosIds: [
+        anexos1.id.toString(),
+        anexos2.id.toString()
+      ]
     })
-
-    await request(app.getHttpServer()).get(`/listchamados/${user.id}`)
     
-    const chamadoOnDatabase = await prisma.chamados.findMany({
+    const atualizacaoOnDatabase = await prisma.atualizacaoChamado.findFirst({
       where: {
-        userId: user.id
+        chamadoId: chamado.id
       }
     })
-    console.log('chamadoOnDatabase: ', chamadoOnDatabase)
+    console.log('atualizacaoOnDatabase: ', atualizacaoOnDatabase)
 
-    expect(chamadoOnDatabase).toEqual([
-      expect.objectContaining({
-        tipoChamado: 'Erro no sistema',
-      }),
-      expect.objectContaining({
-        tipoChamado: 'Erro no sistema 2',
-      }),
-    ])
-
-   
+    expect(atualizacaoOnDatabase?.descricao).toEqual(
+      "Este chamado esta recebendo atualização com a autorização do usuário, pois, o caso foi resolvido."
+    )
   })
 })

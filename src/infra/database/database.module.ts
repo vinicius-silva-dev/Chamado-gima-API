@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { TokenResetPasswordRepository } from "src/domain/application/repository/token-reset-repository";
 import { UserRepository } from "src/domain/application/repository/user-repository";
 import { PrismaService } from "src/infra/database/prisma/prisma.service";
@@ -12,7 +12,12 @@ import { AnalistaRepository } from "src/domain/application/repository/analista-r
 import { PrismaAnalistaRepository } from "./prisma/repository/prisma-analista-repository";
 import { AnexosRepository } from "src/domain/application/repository/anexos-repository";
 import { PrismaAnexosRepository } from "./prisma/repository/prisma-anexos-repository";
+import { AtualizacaoChamadoRepository } from "src/domain/application/repository/atualizacao-chamado";
+import { PrismaAtualizacaoChamadoRepository } from "./prisma/repository/prisma-atualizacao-chamado-repository";
+import { AtualizacaoChamadoAnexosRepository } from "src/domain/application/repository/atualizacao-chamado-anexos-repository";
+import { PrismaAtualizacaoChamadoAnexosRepository } from "./prisma/repository/prisma-atualizacao-chamado-anexos-repository";
 
+@Global()
 @Module({
   providers: [
     PrismaService,
@@ -33,12 +38,20 @@ import { PrismaAnexosRepository } from "./prisma/repository/prisma-anexos-reposi
       useClass: PrismaChamadoRepository
     },
     {
+      provide: AtualizacaoChamadoRepository,
+      useClass: PrismaAtualizacaoChamadoRepository
+    },
+    {
       provide: AnexosRepository,
       useClass: PrismaAnexosRepository
     },
     {
       provide: ChamadoAnexosRepository,
       useClass: PrismaChamadoAnexosRepository
+    },
+    {
+      provide: AtualizacaoChamadoAnexosRepository,
+      useClass: PrismaAtualizacaoChamadoAnexosRepository
     },
   ],
   exports: [
@@ -48,7 +61,9 @@ import { PrismaAnexosRepository } from "./prisma/repository/prisma-anexos-reposi
     AnalistaRepository,
     ChamadoRepository,
     AnexosRepository,
-    ChamadoAnexosRepository
+    ChamadoAnexosRepository,
+    AtualizacaoChamadoAnexosRepository,
+    AtualizacaoChamadoRepository
   ]
 })
 

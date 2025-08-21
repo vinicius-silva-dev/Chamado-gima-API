@@ -88,7 +88,11 @@ export class PrismaChamadoRepository implements ChamadoRepository {
       await this.chamadoAnexosRepository.createMany(chamado.anexos.getItems())
       
     } catch (error) {
-      console.log('Deu ruim', error)
+      if(error instanceof Error) {
+        console.log('Chamado não foi criado! ', error)
+        throw new Error(error.message)
+      }
+      
     }
   }
     

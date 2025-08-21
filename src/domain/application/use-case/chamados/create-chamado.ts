@@ -66,21 +66,6 @@ export class CreateChamadoUseCase {
   
       chamado.anexos = new ChamadosAnexosList(chamadoAnexos) ;
     }
-
-    // const atualizacaoChamado = atualizacaoIds.map((atualizacaoId) => {
-    //   return ChamadoAtualizacao.create({
-    //     chamadoId: chamado.id.toString(),
-    //     atualizacaoId: new UniqueEntityId(atualizacaoId)
-    //   });
-    // });
-
-    // chamado.atualizacaoChamado = atualizacaoChamado;
-
-    // const isAnalista = await this.analistaRepository.findById(userId.toString())
-
-    // if(isAnalista !== null) {
-    //   chamado.analistaId = isAnalista.id
-    // }
    
     await this.chamadoRepository.create(chamado);
 

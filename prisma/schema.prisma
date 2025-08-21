@@ -63,7 +63,7 @@ model Chamados {
 model AtualizacaoChamado {
   id String @id @default(uuid())
   descricao String
-  chamadoId String? @map("chamado_id")
+  chamadoId String @map("chamado_id")
   userId String? @map("user_id")
   analistaId String? @map("analista_id")
   anexos Anexos []

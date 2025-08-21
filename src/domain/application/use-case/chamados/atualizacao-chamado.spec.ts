@@ -5,14 +5,18 @@ import { StatusValueObject } from 'src/domain/enteprise/entities/value-object/st
 import { describe, test, expect, beforeEach } from 'vitest';
 import { AtualizacaoChamadoUseCase } from './atualizacao-chamado';
 import { InMemoryAtualizacaoChamado } from 'test/repository/in-memory-atualizacao-chamado';
+import { InMemoryAnalista } from 'test/repository/in-memory-analista';
+
 
 
 let inMemoryAtualizacaoChamado: InMemoryAtualizacaoChamado
+let inMemoryAnalista: InMemoryAnalista
 let sut: AtualizacaoChamadoUseCase
 describe('Atender chamado', async () => {
   beforeEach(() => {
     inMemoryAtualizacaoChamado = new InMemoryAtualizacaoChamado()
-    sut = new AtualizacaoChamadoUseCase(inMemoryAtualizacaoChamado)
+    inMemoryAnalista = new InMemoryAnalista()
+    sut = new AtualizacaoChamadoUseCase(inMemoryAtualizacaoChamado, inMemoryAnalista)
   });
 
   test('should be abble answer a chamado.', async () => {
@@ -26,7 +30,7 @@ describe('Atender chamado', async () => {
     })
 
     const chamado = await Chamado.create({
-      userId: user.id,
+      userId: user.id.toString(),
       loja: 'Gima FL Jaru',
       prioridade: 'Medio',
       tipo_chamado: 'incidente',
@@ -34,23 +38,26 @@ describe('Atender chamado', async () => {
       atualizacaoChamado: [],
       title: 'Chamado de teste.',
       descricao: 'Essa descição é apenas um teste, onde precisamos descrever bem para que o test seja aprovado.',
-      telefone: 69992115445,
+      telefone: '69992115445',
     }, new UniqueEntityId('chamado-1'))
 
     // console.log(inMemoryChamado.items[0])
     
     await sut.excecute({
       chamadoId: chamado.id.toString(),
-      userId: user.id.toString(),
+      authorId: user.id.toString(),
       descricao: 'Aqui é a descrição do chamado',
       anexosIds: ['1', '2']
     })
   
+    
     expect(inMemoryAtualizacaoChamado.items).toHaveLength(1);
-    expect(inMemoryAtualizacaoChamado.items[0].anexos).toHaveLength(2);
-    expect(inMemoryAtualizacaoChamado.items[0].anexos).toEqual([
-      expect.objectContaining({ anexosId: new UniqueEntityId('1') }),
-      expect.objectContaining({ anexosId: new UniqueEntityId('2') }),
-    ]);
+    expect(inMemoryAtualizacaoChamado.items[0].anexos.getItems()).toHaveLength(2);
+    expect(inMemoryAtualizacaoChamado.items[0].anexos.getItems()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ anexosId: new UniqueEntityId('1') }),
+        expect.objectContaining({ anexosId: new UniqueEntityId('2') }),
+      ])
+    );
   });
 });

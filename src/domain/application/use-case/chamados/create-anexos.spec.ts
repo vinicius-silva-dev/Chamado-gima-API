@@ -25,7 +25,7 @@ describe('Create anexos', async () => {
       body: Buffer.from('')
     });
 
-    console.log(result.value)
+    
     expect(result.isRight()).toBe(true)
     expect(result.value).toEqual({
       anexos: inMemoryAnexos.items[0]

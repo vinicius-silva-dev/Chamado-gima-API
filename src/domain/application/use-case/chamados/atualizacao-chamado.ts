@@ -4,11 +4,13 @@ import { AtualizacaoChamado } from 'src/domain/enteprise/entities/atualizacao-ch
 import { AtualizacaoChamadoRepository } from '../../repository/atualizacao-chamado';
 import { AtualizacaoChamadoAnexos } from 'src/domain/enteprise/entities/atualizacao-chamado-anexos';
 import { Either, right } from 'src/core/either';
+import { AnalistaRepository } from '../../repository/analista-repository';
+import { AtualizacaoAnexosList } from 'src/domain/enteprise/entities/atualizacao-anexos-list';
 // import { ChamadoAnexos } from 'src/domain/enteprise/entities/chamado-anexos';
 
 interface AtualizacaoChamadoRequest {
   chamadoId: string;
-  userId: string;
+  authorId: string
   descricao: string;
   anexosIds: string[];
 }
@@ -22,25 +24,29 @@ export class AtualizacaoChamadoUseCase {
   constructor(
     private atualizacaoChamadoRepository: AtualizacaoChamadoRepository,
     // private userRepository: UserRepository,
-    // private analistaRepository: AnalistaRepository,
+    private analistaRepository: AnalistaRepository,
   ) {}
 
   async excecute({
     chamadoId,
-    userId,
+    authorId,
     descricao,
     anexosIds,
   }: AtualizacaoChamadoRequest): Promise<AtualizacaoChamadoResponse> {
 
     if(descricao.length < 25) {
-      throw new Error('A descrição precisa ter pelo menos 50 caracteres.')
+      throw new Error('A descrição precisa ter pelo menos 25 caracteres.')
     }
 
+    const isAnalista = await this.analistaRepository.findById(authorId)
+
+    console.log('analista ', isAnalista)
+
     const atualizacao = await AtualizacaoChamado.create({
-      chamadoId: new UniqueEntityId(chamadoId),
-      userId: new UniqueEntityId(userId),
-      descricao,
-      anexos: [],
+      chamadoId: chamadoId,
+      userId: isAnalista === null ? authorId : '',
+      analistaId: isAnalista !== null ? authorId : '',
+      descricao
     });
 
     const atualizacaoChamadoAnexos =
@@ -52,7 +58,7 @@ export class AtualizacaoChamadoUseCase {
         });
       });
 
-    atualizacao.anexos = atualizacaoChamadoAnexos;
+    atualizacao.anexos = new AtualizacaoAnexosList(atualizacaoChamadoAnexos);
 
     await this.atualizacaoChamadoRepository.create(atualizacao);
 

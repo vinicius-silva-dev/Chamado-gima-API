@@ -16,6 +16,10 @@ import { CryptographyModule } from '../cryptography/cryptography.module';
 import { AuthenticateController } from './controller/login/authenticate.controller';
 import { AuthenticateUseCase } from 'src/domain/application/use-case/authenticate';
 import { CreateTokenResetPasswordUseCase } from 'src/domain/application/use-case/create-token-password';
+import { EncerrarChamadoController } from './controller/chamados/encerrar-chamado.controller';
+import { EncerrarChamadoUseCase } from 'src/domain/application/use-case/chamados/encerrar-chamado';
+import { AtualizacaoChamadoController } from './controller/chamados/atualizacao-chamado.controller';
+import { AtualizacaoChamadoUseCase } from 'src/domain/application/use-case/chamados/atualizacao-chamado';
 
 @Module({
   imports: [DatabaseModule, StorageModule,CryptographyModule],
@@ -26,6 +30,8 @@ import { CreateTokenResetPasswordUseCase } from 'src/domain/application/use-case
     ResetPasswordController,
 
     CreateChamadoController,
+    EncerrarChamadoController,
+    AtualizacaoChamadoController,
     UploadAnexosController,
     // UploadAnexosMulterController
   ],
@@ -37,6 +43,8 @@ import { CreateTokenResetPasswordUseCase } from 'src/domain/application/use-case
     CreateTokenResetPasswordUseCase,
 
     CreateChamadoUseCase,
+    EncerrarChamadoUseCase,
+    AtualizacaoChamadoUseCase,
     CreateAnexosUseCase,
     
   ],

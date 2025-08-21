@@ -46,8 +46,7 @@ describe('Create chamado e2e', () => {
     const anexos1 = await anexosFactory.makePrismaAnexos()
     const anexos2 = await anexosFactory.makePrismaAnexos()
 
-    await request(app.getHttpServer()).post('/createchamado').send({
-      userId: user.id,
+    await request(app.getHttpServer()).post(`/createchamado/${user.id}`).send({
       loja: 'Gima FL Jaru',
       prioridade: 'Medio',
       tipoChamado: 'Erro no sistema',
