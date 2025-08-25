@@ -1,4 +1,5 @@
-import { Body, Controller, HttpCode, Param, Post } from "@nestjs/common";
+import { Body, Controller, HttpCode, Param, Post, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 import { AtualizacaoChamadoUseCase } from "src/domain/application/use-case/chamados/atualizacao-chamado";
 
 import { z } from "zod";
@@ -18,6 +19,7 @@ export class AtualizacaoChamadoController {
     private atualizacaoChamadoUseCase: AtualizacaoChamadoUseCase,
   ) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   @HttpCode(201)
   async atualizacaoChamado(

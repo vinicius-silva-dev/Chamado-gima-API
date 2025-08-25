@@ -8,11 +8,13 @@ import request from 'supertest'
 import { UserFactory } from 'test/factory/make-user';
 import { AnexosFactory } from 'test/factory/make-anexos';
 import { hash } from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 describe('Update chamado e2e', () => {
   let app: INestApplication
   let prisma: PrismaService
   let anexosFactory: AnexosFactory
+  let jwt: JwtService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -24,6 +26,8 @@ describe('Update chamado e2e', () => {
 
     prisma = moduleRef.get(PrismaService)
     anexosFactory = moduleRef.get(AnexosFactory)
+    jwt = moduleRef.get(JwtService)
+
     await app.init()
   })
   test('[Put] should be able to update a chamado!', async () => {
@@ -53,6 +57,7 @@ describe('Update chamado e2e', () => {
     //     }
     // })
     
+    const accessToken = jwt.sign({ sub: user.id.toString()})
     const chamado = await prisma.chamados.create({
       data: {
         userId: user.id,
@@ -67,7 +72,10 @@ describe('Update chamado e2e', () => {
       }
     })
 
-    await request(app.getHttpServer()).post(`/atualizacaochamado/${chamado.id}/${user.id}`).send({
+    await request(app.getHttpServer())
+      .post(`/atualizacaochamado/${chamado.id}/${user.id}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({
       descricao: "Este chamado esta recebendo atualização com a autorização do usuário, pois, o caso foi resolvido.",
       anexosIds: [
         anexos1.id.toString(),

@@ -5,7 +5,6 @@ import { beforeAll, describe, test } from "vitest";
 import { AppModule } from 'src/app.module';
 import { DatabaseModule } from 'src/infra/database/database.module';
 import request from 'supertest'
-// import { StatusValueObject } from 'src/domain/enteprise/entities/value-object/status';
 import { UserFactory } from 'test/factory/make-user';
 import { AnexosFactory } from 'test/factory/make-anexos';
 import { hash } from 'bcrypt';
@@ -53,7 +52,7 @@ describe('Create chamado e2e', () => {
 
     await request(app.getHttpServer())
       .post(`/createchamado/${user.id}`)
-      // .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${accessToken}`)
       .send({
       loja: 'Gima FL Jaru',
       prioridade: 'Medio',

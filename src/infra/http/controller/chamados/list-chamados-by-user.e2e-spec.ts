@@ -32,14 +32,14 @@ describe('List chamado e2e', () => {
     // const user = await userFactory.makePrismaUser()
     const user = await prisma.user.create({
       data: {
-          name: 'Osvaldo Silva',
-          email: 'osvaldo100@live.com',
-          password: await hash('123456', 6),
-          cargo: 'aux.financeiro',
-          categoria: 'Padrão',
-          loja: 'Gima FL Jaru',
-          createdAt: new Date(),
-        }
+        name: 'Osvaldo Silva',
+        email: 'osvaldo100@live.com',
+        password: await hash('123456', 6),
+        cargo: 'aux.financeiro',
+        categoria: 'Padrão',
+        loja: 'Gima FL Jaru',
+        createdAt: new Date(),
+      }
     })
     
     const accessToken = jwt.sign({ sub: user.id.toString()})

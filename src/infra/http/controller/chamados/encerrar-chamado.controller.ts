@@ -1,4 +1,5 @@
-import { Body, Controller, HttpCode, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, HttpCode, Param, Post, Put, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 import { EncerrarChamadoUseCase } from "src/domain/application/use-case/chamados/encerrar-chamado";
 
 import { z } from "zod";
@@ -20,6 +21,7 @@ export class EncerrarChamadoController {
     private encerrarChamadoUseCase: EncerrarChamadoUseCase,
   ) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Put()
   @HttpCode(201)
   async encerrarChamado(

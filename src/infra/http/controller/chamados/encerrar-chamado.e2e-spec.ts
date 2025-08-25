@@ -8,11 +8,13 @@ import request from 'supertest'
 import { UserFactory } from 'test/factory/make-user';
 import { AnexosFactory } from 'test/factory/make-anexos';
 import { hash } from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { object } from 'zod';
 
 describe('Close chamado e2e', () => {
   let app: INestApplication
   let prisma: PrismaService
-
+  let jwt: JwtService
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
@@ -22,6 +24,7 @@ describe('Close chamado e2e', () => {
     app = moduleRef.createNestApplication()
 
     prisma = moduleRef.get(PrismaService)
+    jwt = moduleRef.get(JwtService)
 
     await app.init()
   })
@@ -29,24 +32,25 @@ describe('Close chamado e2e', () => {
     // const user = await userFactory.makePrismaUser()
     const user = await prisma.user.create({
       data: {
-          name: 'Osvaldo Silva',
-          email: 'osvaldo100@live.com',
-          password: await hash('123456', 6),
-          cargo: 'aux.financeiro',
-          categoria: 'Padrão',
-          loja: 'Gima FL Jaru',
-          createdAt: new Date(),
-        }
+        name: 'Osvaldo Silva',
+        email: 'osvaldo100@live.com',
+        password: await hash('123456', 6),
+        cargo: 'aux.financeiro',
+        categoria: 'Padrão',
+        loja: 'Gima FL Jaru',
+        createdAt: new Date(),
+      }
     })
 
+    const accessToken = jwt.sign({ sub: user.id })
     const analista = await prisma.analista.create({
       data: {
-          name: 'Osvaldo Silva',
-          email: 'osvaldo100@live.com',
-          password: await hash('123456', 6),
-          categoria: 'Padrão',
-          createdAt: new Date(),
-        }
+        name: 'Osvaldo Silva',
+        email: 'osvaldo100@live.com',
+        password: await hash('123456', 6),
+        categoria: 'Padrão',
+        createdAt: new Date(),
+      }
     })
     
     const chamado = await prisma.chamados.create({
@@ -64,10 +68,13 @@ describe('Close chamado e2e', () => {
     })
 
 
-    const result = await request(app.getHttpServer()).put(`/encerrarchamado/${chamado.id}/${analista.id}`).send({
-      descricaoEncerramento: "Este chamado esta sendo encerrado com a autorização do usuário, pois, o caso foi resolvido.",
-      status: 'Encerrado'
-    })
+    const result = await request(app.getHttpServer())
+      .put(`/encerrarchamado/${chamado.id}/${analista.id}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({
+        descricaoEncerramento: "Este chamado esta sendo encerrado com a autorização do usuário, pois, o caso foi resolvido.",
+        status: 'Encerrado'
+      })
     
     const chamadoOnDatabase = await prisma.chamados.findFirst({
       where: {
@@ -75,10 +82,13 @@ describe('Close chamado e2e', () => {
       }
     })
 
-    expect(chamadoOnDatabase?.descricaoEncerramento).toEqual(
-      "Este chamado esta sendo encerrado com a autorização do usuário, pois, o caso foi resolvido."
+    // console.log(result.body)
+    expect(result.body).toEqual(
+      expect.objectContaining({
+        props: expect.objectContaining({
+          descricaoEncerramento: "Este chamado esta sendo encerrado com a autorização do usuário, pois, o caso foi resolvido."
+        })
+      })
     )
-
-   
   })
 })
