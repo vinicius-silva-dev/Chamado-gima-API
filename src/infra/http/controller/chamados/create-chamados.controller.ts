@@ -1,6 +1,5 @@
-import { Body, Controller, HttpCode, Param, Post } from "@nestjs/common";
-// import { UniqueEntityId } from "src/core/entities/unique-entity-id";
-// import { CreateAnexosUseCase } from "src/domain/application/use-case/chamados/create-anexos";
+import { Body, Controller, HttpCode, Param, Post, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 import { CreateChamadoUseCase } from "src/domain/application/use-case/chamados/create-chamado";
 import { StatusValueObject } from "src/domain/enteprise/entities/value-object/status";
 
@@ -45,6 +44,7 @@ export class CreateChamadoController {
     // private createAnexosUseCase: CreateAnexosUseCase
   ) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   @HttpCode(201)
   async createChamado(

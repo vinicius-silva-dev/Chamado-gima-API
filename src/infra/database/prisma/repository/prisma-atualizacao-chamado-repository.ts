@@ -43,7 +43,6 @@ export class PrismaAtualizacaoChamadoRepository implements AtualizacaoChamadoRep
   async create(atualizacao: AtualizacaoChamado): Promise<void> {
     try {
       const data = PrismaAtualizacaoChamadoMappers.toPrisma(atualizacao)
-      console.log('banco: ', atualizacao)
 
       await this.prisma.atualizacaoChamado.create({
         data

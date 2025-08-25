@@ -35,10 +35,10 @@ export class PrismaChamadoAnexosMapper {
       where: {
         id: {
           in: anexosIds,
-        },     
+        }     
       },
       data: {
-         chamadoId: anexosIds[0].chamadoId.toString(),
+         chamadoId: anexos[0].chamadoId.toString(),
       },
     }
   }

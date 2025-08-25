@@ -26,7 +26,6 @@ describe('Upload anexos E2E', () => {
       .post('/anexos')
       .attach('file', './test/e2e/capa_linkedin.jpg')
 
-    console.log(response.body)
     expect(response.statusCode).toBe(201)
     expect(response.body).toEqual({
       anexosId: expect.any(String)

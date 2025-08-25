@@ -25,7 +25,6 @@ export class PrismaAtualizacaoChamadoAnexosRepository implements AtualizacaoCham
     // Vamos fazer um update no atualizacaochamadoId
     await this.prisma.anexos.updateMany(data)
   }
-
   deleteMany(anexos: AtualizacaoChamadoAnexos[]): Promise<void> {
     throw new Error("Method not implemented.");
   }

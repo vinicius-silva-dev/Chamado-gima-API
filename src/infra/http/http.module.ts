@@ -20,6 +20,8 @@ import { EncerrarChamadoController } from './controller/chamados/encerrar-chamad
 import { EncerrarChamadoUseCase } from 'src/domain/application/use-case/chamados/encerrar-chamado';
 import { AtualizacaoChamadoController } from './controller/chamados/atualizacao-chamado.controller';
 import { AtualizacaoChamadoUseCase } from 'src/domain/application/use-case/chamados/atualizacao-chamado';
+import { ListChamadosByUserController } from './controller/chamados/list-chamados-by-user.controller';
+import { ListChamadosByUserUseCase } from 'src/domain/application/use-case/chamados/list-chamados-by-user';
 
 @Module({
   imports: [DatabaseModule, StorageModule,CryptographyModule],
@@ -32,6 +34,7 @@ import { AtualizacaoChamadoUseCase } from 'src/domain/application/use-case/chama
     CreateChamadoController,
     EncerrarChamadoController,
     AtualizacaoChamadoController,
+    ListChamadosByUserController,
     UploadAnexosController,
     // UploadAnexosMulterController
   ],
@@ -45,6 +48,7 @@ import { AtualizacaoChamadoUseCase } from 'src/domain/application/use-case/chama
     CreateChamadoUseCase,
     EncerrarChamadoUseCase,
     AtualizacaoChamadoUseCase,
+    ListChamadosByUserUseCase,
     CreateAnexosUseCase,
     
   ],

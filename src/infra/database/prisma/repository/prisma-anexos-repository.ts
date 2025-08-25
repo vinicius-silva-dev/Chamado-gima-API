@@ -37,24 +37,6 @@ export class PrismaAnexosRepository implements AnexosRepository {
     return PrismaAnexosMappers.toDomain(anexos)
   }
 
-  // async findByUserId(userId: string): Promise<Anexos[] | null> {
-  //   const anexos = await this.prisma.anexos.findUnique({
-  //     where: {
-  //       userId
-  //     }
-  //   })
-
-  //   if (!anexos) {
-  //     return null
-  //   }
-
-    
-  //   return PrismaAnexosMappers.toDomain(anexos)
-  // }
-
-  // findByCargo(cargo: string): Promise<Anexos | null> {
-  //   throw new Error("Method not implemented.");
-  // }
 
   async save(anexos: Anexos): Promise<void> {
     const data = PrismaAnexosMappers.toPrisma(anexos)

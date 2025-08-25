@@ -80,7 +80,6 @@ describe('Update chamado e2e', () => {
         chamadoId: chamado.id
       }
     })
-    console.log('atualizacaoOnDatabase: ', atualizacaoOnDatabase)
 
     expect(atualizacaoOnDatabase?.descricao).toEqual(
       "Este chamado esta recebendo atualização com a autorização do usuário, pois, o caso foi resolvido."

@@ -24,6 +24,7 @@ export class PrismaChamadoAnexosRepository implements ChamadoAnexosRepository {
     // O mepper é responsável por pegar os id dos anexos e retornar um objeto que faz a operação de update.
     const data = PrismaChamadoAnexosMapper.toPrismaUpdateMany(anexos)
 
+    console.log(data)
     // Vamos fazer um update no chamadoId
     await this.prisma.anexos.updateMany(data)
   }

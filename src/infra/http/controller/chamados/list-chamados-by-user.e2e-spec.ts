@@ -1,17 +1,19 @@
 import {Test} from '@nestjs/testing'
 import { INestApplication } from "@nestjs/common";
 import { PrismaService } from "src/infra/database/prisma/prisma.service";
-import { beforeAll, describe, test } from "vitest";
+import { beforeAll, describe, test, expect } from "vitest";
 import { AppModule } from 'src/app.module';
 import { DatabaseModule } from 'src/infra/database/database.module';
 import request from 'supertest'
 import { UserFactory } from 'test/factory/make-user';
 import { AnexosFactory } from 'test/factory/make-anexos';
 import { hash } from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 describe('List chamado e2e', () => {
   let app: INestApplication
   let prisma: PrismaService
+  let jwt: JwtService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -22,6 +24,7 @@ describe('List chamado e2e', () => {
     app = moduleRef.createNestApplication()
 
     prisma = moduleRef.get(PrismaService)
+    jwt = moduleRef.get(JwtService)
 
     await app.init()
   })
@@ -39,6 +42,8 @@ describe('List chamado e2e', () => {
         }
     })
     
+    const accessToken = jwt.sign({ sub: user.id.toString()})
+
     await prisma.chamados.create({
       data: {
         userId: user.id,
@@ -67,24 +72,29 @@ describe('List chamado e2e', () => {
       }
     })
 
-    await request(app.getHttpServer()).get(`/listchamados/${user.id}`)
+    const result = await request(app.getHttpServer())
+      .get(`/listchamados/${user.id}`)
+      .set('Authorization', `Bearer ${accessToken}`)
     
     const chamadoOnDatabase = await prisma.chamados.findMany({
       where: {
         userId: user.id
       }
     })
-    console.log('chamadoOnDatabase: ', chamadoOnDatabase)
+    console.log('chamadoOnDatabase: ', result.body.chamados)
 
-    expect(chamadoOnDatabase).toEqual([
+    expect(result.body.chamados).toEqual([
       expect.objectContaining({
-        tipoChamado: 'Erro no sistema',
+        props: expect.objectContaining({
+          title: 'Chamado de teste.',
+        }),
       }),
       expect.objectContaining({
-        tipoChamado: 'Erro no sistema 2',
-      }),
+        props: expect.objectContaining({
+          tipo_chamado: 'Erro no sistema 2',
+        }),
+      })
     ])
 
-   
   })
 })

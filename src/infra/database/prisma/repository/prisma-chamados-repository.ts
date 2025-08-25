@@ -67,7 +67,7 @@ export class PrismaChamadoRepository implements ChamadoRepository {
 
   async create(chamado: Chamado): Promise<void> {
     try {
-      console.log('banco ',chamado)
+    
       const data = PrismaChamadosMappers.toPrisma(chamado)
 
       const isUser = await this.prisma.user.findUnique({
@@ -92,7 +92,6 @@ export class PrismaChamadoRepository implements ChamadoRepository {
         console.log('Chamado não foi criado! ', error)
         throw new Error(error.message)
       }
-      
     }
   }
     

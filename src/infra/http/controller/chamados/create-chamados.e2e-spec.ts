@@ -9,12 +9,14 @@ import request from 'supertest'
 import { UserFactory } from 'test/factory/make-user';
 import { AnexosFactory } from 'test/factory/make-anexos';
 import { hash } from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 describe('Create chamado e2e', () => {
   let app: INestApplication
   let prisma: PrismaService
   let userFactory: UserFactory
   let anexosFactory: AnexosFactory
+  let jwt: JwtService
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
@@ -26,6 +28,7 @@ describe('Create chamado e2e', () => {
     prisma = moduleRef.get(PrismaService)
     userFactory = moduleRef.get(UserFactory)
     anexosFactory = moduleRef.get(AnexosFactory)
+    jwt = moduleRef.get(JwtService)
 
     await app.init()
   })
@@ -42,11 +45,16 @@ describe('Create chamado e2e', () => {
           createdAt: new Date(),
         }
     })
-    console.log('user: ',user)
+
+    const accessToken = jwt.sign({ sub: user.id })
+
     const anexos1 = await anexosFactory.makePrismaAnexos()
     const anexos2 = await anexosFactory.makePrismaAnexos()
 
-    await request(app.getHttpServer()).post(`/createchamado/${user.id}`).send({
+    await request(app.getHttpServer())
+      .post(`/createchamado/${user.id}`)
+      // .set('Authorization', `Bearer ${accessToken}`)
+      .send({
       loja: 'Gima FL Jaru',
       prioridade: 'Medio',
       tipoChamado: 'Erro no sistema',
@@ -67,7 +75,7 @@ describe('Create chamado e2e', () => {
         userId: user.id
       }
     })
-    console.log('chamadoOnDatabase: ', chamadoOnDatabase)
+    
     expect(chamadoOnDatabase).toBeTruthy()
 
     // const anexosOnDatabase = await prisma.anexos.findMany({
