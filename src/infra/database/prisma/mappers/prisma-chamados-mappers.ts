@@ -36,6 +36,7 @@ export class PrismaChamadosMappers {
       descricaoEncerramento: chamado.descricaoEncerramento,
       descricaoCancelamento: chamado.descricaoCancelamento,
       telefone: chamado.telefone,
+      status: chamado.status.toValue() ?? new StatusValueObject(),
       createdAt: chamado.createdAt,
       updatedAt: chamado.updatedAt,
       userId: chamado.userId.toString(),

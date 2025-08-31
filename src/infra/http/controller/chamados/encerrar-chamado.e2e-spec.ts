@@ -73,7 +73,6 @@ describe('Close chamado e2e', () => {
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
         descricaoEncerramento: "Este chamado esta sendo encerrado com a autorização do usuário, pois, o caso foi resolvido.",
-        status: 'Encerrado'
       })
     
     const chamadoOnDatabase = await prisma.chamados.findFirst({
@@ -82,12 +81,12 @@ describe('Close chamado e2e', () => {
       }
     })
 
-    // console.log(result.body)
     expect(result.body).toEqual(
       expect.objectContaining({
         props: expect.objectContaining({
           descricaoEncerramento: "Este chamado esta sendo encerrado com a autorização do usuário, pois, o caso foi resolvido."
-        })
+        }),
+
       })
     )
   })

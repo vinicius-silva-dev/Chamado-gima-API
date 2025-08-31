@@ -13,6 +13,7 @@ export class PrismaUserRepository implements UserRepository {
   ) {}
   
   async findById(id: string): Promise<User | null> {
+    
     const user = await this.prisma.user.findUnique({
       where: {
         id
@@ -27,11 +28,13 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   async findByEmail(email: string): Promise<User | null> {
+    
     const user = await this.prisma.user.findUnique({
       where: {
         email
       }
     })
+
 
     if (!user) {
       return null
@@ -39,6 +42,7 @@ export class PrismaUserRepository implements UserRepository {
 
     return PrismaUserMappers.toDomain(user)
   }
+
   findByCargo(cargo: string): Promise<User | null> {
     throw new Error("Method not implemented.");
   }

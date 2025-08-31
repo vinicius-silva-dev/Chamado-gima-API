@@ -62,6 +62,12 @@ export class User extends Entity<UserProps> {
     this.touch()
   }
 
+  set loja(loja: string) {
+    this.props.loja = loja
+
+    this.touch()
+  }
+
   static create(props: UserProps, id?: UniqueEntityId) {
     const user = new User(props, id)
     return user

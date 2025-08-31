@@ -50,21 +50,20 @@ describe('Create chamado e2e', () => {
     const anexos1 = await anexosFactory.makePrismaAnexos()
     const anexos2 = await anexosFactory.makePrismaAnexos()
 
-    await request(app.getHttpServer())
+    const result = await request(app.getHttpServer())
       .post(`/createchamado/${user.id}`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
-      loja: 'Gima FL Jaru',
-      prioridade: 'Medio',
-      tipoChamado: 'Erro no sistema',
-      status: 'aberto',
-      title: 'Chamado de teste.',
-      descricao: 'Essa descição é apenas um teste.',
-      anexos: [
-        anexos1.id,
-        anexos2.id
-      ],
-      telefone: '69992115445',
+        loja: 'Gima FL Jaru',
+        prioridade: 'Medio',
+        tipoChamado: 'Erro no sistema',
+        title: 'Chamado de teste.',
+        descricao: 'Essa descição é apenas um teste, mas ela precista tem mais de 25 caracteres para ser valido, caso contrário, teremos um erro.',
+        anexos: [
+          anexos1.id.toString(),
+          anexos2.id.toString()
+        ],
+        telefone: '69992115445',
     })
 
     // const anexos = await prisma.$queryRaw` SELECT * FROM Anexos INNER JOIN Chamados ON Anexos.id = Chamados.anexos`

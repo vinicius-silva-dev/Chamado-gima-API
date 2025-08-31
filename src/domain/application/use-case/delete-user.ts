@@ -1,6 +1,7 @@
 import { hash } from "bcrypt";
 import { UserRepository } from "../repository/user-repository";
 import { User } from "src/domain/enteprise/entities/user";
+import { Injectable } from "@nestjs/common";
 
 interface DeleteUserRequest {
   id: string
@@ -10,6 +11,7 @@ type DeleteUserResponse = {
   mensage: string
 }
 
+@Injectable()
 export class DeleteUserUseCase {
   constructor(
     private userRepository: UserRepository

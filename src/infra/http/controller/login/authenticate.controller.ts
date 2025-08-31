@@ -4,12 +4,13 @@ import { ZodValidationPipe } from '../../pipes/zod-validation';
 import { AuthenticateUseCase } from 'src/domain/application/use-case/authenticate';
 import { WrongCredentialsError } from 'src/core/errors/errors/wrong-credentials-error';
 
-const envShema = z.object({
+const envSchema = z.object({
   email: z.string().email(),
   password: z.string(),
 });
 
-type User = z.infer<typeof envShema>; // aqui estamos inferindo type envSchema para o type User
+type User = z.infer<typeof envSchema>; // aqui estamos inferindo type envSchema para o type User
+const bodyValidation = new ZodValidationPipe(envSchema)
 
 @Controller('/auth')
 export class AuthenticateController {
@@ -17,8 +18,7 @@ export class AuthenticateController {
 
   @Post()
   @HttpCode(201)
-  // @UsePipes(new ZodValidationPipe(envShema))
-  async authenticate(@Body() body: User) {
+  async authenticate(@Body(bodyValidation) body: User) {
     
     const { email, password } = body;
     

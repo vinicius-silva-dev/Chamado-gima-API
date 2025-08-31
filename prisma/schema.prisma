@@ -8,6 +8,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// enum Tipo_Chamado {
+//   ErroNoSistema @map("Erro no sistema")
+//   LiberarFuncao @map("Liberar função")
+//   Duvida
+//   Outros
+// }
+
+// enum Status {
+//   Aberto
+//   EmAndamento @map("Em andamento")
+//   Resolvido
+//   Cancelado
+// }
 model User {
   id   String @id @default(uuid())
   name String
@@ -41,13 +54,13 @@ model Chamados {
   id String @id @default(uuid())
   loja String
   prioridade String
-  tipoChamado String @map("tipo_chamado")
+  tipoChamado String  @map("tipo_chamado")
   title String
   descricao String
   descricaoEncerramento String? @map("descricao_encerramento")
   descricaoCancelamento String? @map("descricao_cancelamento")
   telefone String
-  status String? @default("aberto")
+  status String? @default("Aberto")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime? @default(now()) @map("updated_at")
   userId String @map("user_id")

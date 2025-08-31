@@ -1,12 +1,12 @@
-import { Body, Controller, HttpCode, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, HttpCode, Param, Post, UseGuards, UsePipes } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { CreateChamadoUseCase } from "src/domain/application/use-case/chamados/create-chamado";
 import { StatusValueObject } from "src/domain/enteprise/entities/value-object/status";
-
 import { z } from "zod";
+import { ZodValidationPipe } from "../../pipes/zod-validation";
 
 const envSchema = z.object({
-  userId: z.string().uuid(),
+  // userId: z.string().uuid(),
   loja: z.string(),
   prioridade: z.enum([
     'Baixo',
@@ -15,18 +15,21 @@ const envSchema = z.object({
   ]),
   tipoChamado: z.enum([
     'Erro no sistema',
-    'Duvída',
+    'Liberar acesso',
+    'Duvida',
     'Cadastro de usuários'
   ]),
   status: z.enum([
-    'aberto',
-    'atendimento',
-    'resolvido',
-    'cancelado',
-  ]).default('aberto'),
+    'Aberto',
+    'Atendimento',
+    'Resolvido',
+    'Cancelado',
+  ]).default('Aberto'),
   title: z.string(),
-  descricao: z.string().length(25),
-  anexos: z.array(z.string().uuid()),
+  descricao: z.string().min(25, {
+    message: "A descrição precisa ter pelo menos 25 caracteres"
+  }),
+  anexos: z.array(z.string().uuid()).default([]),
   // anexos: z.array(z.object({
   //   id: z.string(),
   //   title: z.string(),
@@ -36,6 +39,8 @@ const envSchema = z.object({
 })
 
 type Chamado = z.infer<typeof envSchema>
+
+const bodyValidation = new ZodValidationPipe(envSchema)
 
 @Controller('/createchamado/:userId')
 export class CreateChamadoController {
@@ -49,7 +54,7 @@ export class CreateChamadoController {
   @HttpCode(201)
   async createChamado(
     @Param('userId') userId: string,
-    @Body() body: Chamado
+    @Body(bodyValidation) body: Chamado
   ) {
     try {
       const {
@@ -62,8 +67,7 @@ export class CreateChamadoController {
         anexos,
         telefone
       } = body
-  
-      // console.log(body)
+      
       await this.createChamadoUseCase.excecute({
         userId,
         loja,
@@ -76,12 +80,6 @@ export class CreateChamadoController {
         telefone
       })
       
-      // anexos.forEach(async (item) => {
-      //   await this.createAnexosUseCase.excecute({
-      //     title: item.title,
-      //     link: item.link
-      //   })
-      // })
      
       return {
         stautsCode: 201,

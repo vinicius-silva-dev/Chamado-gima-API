@@ -40,8 +40,6 @@ export class AtualizacaoChamadoUseCase {
 
     const isAnalista = await this.analistaRepository.findById(authorId)
 
-    console.log('analista ', isAnalista)
-
     const atualizacao = await AtualizacaoChamado.create({
       chamadoId: chamadoId,
       userId: isAnalista === null ? authorId : '',

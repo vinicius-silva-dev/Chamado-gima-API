@@ -54,7 +54,7 @@ export class InMemoryChamado implements ChamadoRepository {
     return chamados
   }
 
-  async save(chamado: Chamado): Promise<void> {
+  async save(chamado: Chamado): Promise<Chamado | null> {
     const chamadoIndex = await this.items.findIndex(
       (index) => index.id === chamado.id,
     )
@@ -68,6 +68,8 @@ export class InMemoryChamado implements ChamadoRepository {
     await this.chamadoAnexosRepository.deleteMany(
       chamado.anexos.getRemovedItems(),
     )
+
+    return this.items[chamadoIndex]
   }
 
   async create(chamado: Chamado): Promise<void> {

@@ -3,7 +3,7 @@ import { Controller, FileTypeValidator, MaxFileSizeValidator, ParseFilePipe, Pos
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InvalidAnexo } from 'src/core/errors/errors/invalid-anexos';
-import { ResouceNotFoundError } from 'src/core/errors/errors/resource-not-found';
+
 import { CreateAnexosUseCase } from 'src/domain/application/use-case/chamados/create-anexos';
 
 @Controller('/anexos')

@@ -83,6 +83,7 @@ describe('Update chamado e2e', () => {
       ]
     })
     
+    // console.log('test: ', result.body.error.details)
     const atualizacaoOnDatabase = await prisma.atualizacaoChamado.findFirst({
       where: {
         chamadoId: chamado.id

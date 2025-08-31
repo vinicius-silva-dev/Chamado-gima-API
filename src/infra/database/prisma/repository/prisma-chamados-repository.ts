@@ -54,15 +54,23 @@ export class PrismaChamadoRepository implements ChamadoRepository {
     throw new Error("Method not implemented.");
   }
 
-  async save(chamado: Chamado): Promise<void> {
+  async save(chamado: Chamado): Promise<Chamado | null> {
     const data = PrismaChamadosMappers.toPrisma(chamado)
     
-    await this.prisma.chamados.update({
+    const result = await this.prisma.chamados.update({
       where: {
         id: data.id
       },
       data
     })
+
+    const newChamado = await this.findById(result.id)
+
+    if (!chamado) {
+      return null
+    }
+
+    return newChamado
   }
 
   async create(chamado: Chamado): Promise<void> {

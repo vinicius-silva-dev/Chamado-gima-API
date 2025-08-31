@@ -14,7 +14,7 @@ type CreateAnalistaResponse = {
 }
 
 @Injectable()
-export class CreateanalistaUseCase {
+export class CreateAnalistaUseCase {
   constructor(
     private analistaRepository: AnalistaRepository
   ){}

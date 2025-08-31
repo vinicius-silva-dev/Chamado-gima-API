@@ -6,7 +6,7 @@ export abstract class ChamadoRepository {
   abstract findByUserId(userId: string): Promise<Chamado[] | null>
   abstract findManyServedAnalistaId(analistaId: string): Promise<Chamado[] | null>
   abstract findByDate(date: string): Promise<Chamado | null>
-  abstract save(chamado: Chamado): Promise<void>
+  abstract save(chamado: Chamado): Promise<Chamado | null>
   abstract create(chamado: Chamado): Promise<void>
   abstract delete(chamado: Chamado): Promise<void>
 }

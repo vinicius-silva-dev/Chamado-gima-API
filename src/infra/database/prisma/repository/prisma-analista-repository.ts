@@ -36,8 +36,15 @@ export class PrismaAnalistaRepository implements AnalistaRepository {
   save(analista: Analista): Promise<void> {
     throw new Error("Method not implemented.");
   }
-  create(analista: Analista): Promise<void> {
-    throw new Error("Method not implemented.");
+  async create(analista: Analista): Promise<void> {
+    try {
+      const data = PrismaAnalistaMappers.toPrisma(analista)
+      await this.prisma.analista.create({
+        data
+      })
+    } catch (error) {
+      console.log('Deu ruim', error)
+    }
   }
   delete(analista: Analista): Promise<void> {
     throw new Error("Method not implemented.");

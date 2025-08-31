@@ -10,7 +10,7 @@ import { AnalistaRepository } from '../../repository/analista-repository'
 
 interface EncerrarChamadoRequest {
   chamadoId: string,
-  userId: string
+  analistaId: string
   descricaoEncerramento: string
   status: string
 }
@@ -26,7 +26,7 @@ export class EncerrarChamadoUseCase {
 
   async excecute({
     chamadoId,
-    userId,
+    analistaId,
     descricaoEncerramento,
     status,
   }: EncerrarChamadoRequest): Promise<EncerrarChamadoResponse> {
@@ -37,9 +37,9 @@ export class EncerrarChamadoUseCase {
       return left(new ResouceNotFoundError())
     }
 
-    const user = await this.analistaRepository.findById(userId)
+    const isAnalista = await this.analistaRepository.findById(analistaId)
     
-    if (user === null) {
+    if (isAnalista === null) {
       return left(new NotAllowedError())
     }
 
@@ -47,6 +47,7 @@ export class EncerrarChamadoUseCase {
       return left(new NotAllowedError())
     }
 
+    console.log('status: ', status)
     chamado.descricaoEncerramento = descricaoEncerramento
     chamado.status = new StatusValueObject(status)
 

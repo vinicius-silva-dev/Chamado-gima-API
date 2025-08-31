@@ -56,7 +56,7 @@ describe('Encerrar chamado', async () => {
     
     await sut.excecute({
       chamadoId: 'chamado-1',
-      userId: user.id.toString(),
+      analistaId: user.id.toString(),
       descricaoEncerramento: 'Esse chamado foi resolvido por meio de testes automatizados',
       status: 'Encerrado'
     })
@@ -95,7 +95,7 @@ describe('Encerrar chamado', async () => {
     
     const result = await sut.excecute({
       chamadoId: 'chamado-1',
-      userId: user.id.toString(),
+      analistaId: user.id.toString(),
       descricaoEncerramento: 'Esse chamado foi resolvido por meio de testes automatizados',
       status: 'Encerrado'
     })
