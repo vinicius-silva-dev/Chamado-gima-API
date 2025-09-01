@@ -47,7 +47,6 @@ export class EncerrarChamadoUseCase {
       return left(new NotAllowedError())
     }
 
-    console.log('status: ', status)
     chamado.descricaoEncerramento = descricaoEncerramento
     chamado.status = new StatusValueObject(status)
 

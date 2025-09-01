@@ -27,7 +27,7 @@ export class ListChamadosByUserUseCase {
     if(!chamados){
       return left(new ResouceNotFoundError())
     }
-
+    
     return right({
       chamados
     })

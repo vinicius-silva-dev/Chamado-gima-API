@@ -39,21 +39,21 @@ describe('Cancelar chamado', async () => {
     })
 
     const chamado = await Chamado.create({
-      userId: user.id,
+      userId: user.id.toString(),
       loja: 'Gima FL Jaru',
       prioridade: 'Medio',
       tipo_chamado: 'incidente',
       status: new StatusValueObject(),
       title: 'Chamado de teste.',
       descricao: 'Essa descição é apenas um teste.',
-      telefone: 69992115445,
+      telefone: '69992115445',
     }, new UniqueEntityId('chamado-1'))
 
     await inMemoryChamado.create(chamado)
     // console.log(inMemoryChamado.items[0])
     
     await sut.excecute({
-      id: new UniqueEntityId('chamado-1'),
+      chamadoId: 'chamado-1',
       descricao: 'Chamado cancelado pelo usuário.',
       status: 'Cancelado'
     })

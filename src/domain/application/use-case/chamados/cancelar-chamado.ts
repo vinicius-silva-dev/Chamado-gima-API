@@ -8,7 +8,7 @@ import { ResouceNotFoundError } from 'src/core/errors/errors/resource-not-found'
 // import { ChamadoAnexos } from 'src/domain/enteprise/entities/chamado-anexos';
 
 interface CancelarChamadoRequest {
-  id: UniqueEntityId
+  chamadoId: string
   descricao: string
   status: string
 }
@@ -22,12 +22,12 @@ export class CancelarChamadoUseCase {
   constructor(private chamadoRepository: ChamadoRepository) {}
 
   async excecute({
-    id,
+    chamadoId,
     descricao,
     status,
   }: CancelarChamadoRequest): Promise<CancelarChamadoResponse> {
     
-    const chamado = await this.chamadoRepository.findById(id.toString())
+    const chamado = await this.chamadoRepository.findById(chamadoId)
   
     if (!chamado) {
       return left(new ResouceNotFoundError())
@@ -36,7 +36,6 @@ export class CancelarChamadoUseCase {
     if(!descricao || descricao === '') {
       throw new Error('Precisa justificar o cancelamento do chamado.')
     }
-
 
     chamado.descricaoCancelamento = descricao
     chamado.status = new StatusValueObject(status)

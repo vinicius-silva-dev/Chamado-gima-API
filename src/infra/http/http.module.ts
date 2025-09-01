@@ -37,6 +37,8 @@ import { GetUserByIdController } from './controller/user/get-user-by-id.controll
 import { GetUserByIdUseCase } from 'src/domain/application/use-case/get-user-by-id';
 import { DeleteUserController } from './controller/user/delete-user.controller';
 import { DeleteUserUseCase } from 'src/domain/application/use-case/delete-user';
+import { CancelarChamadoController } from './controller/chamados/cancelar-chamado.controller';
+import { CancelarChamadoUseCase } from 'src/domain/application/use-case/chamados/cancelar-chamado';
 
 @Module({
   imports: [DatabaseModule, StorageModule,CryptographyModule],
@@ -54,6 +56,7 @@ import { DeleteUserUseCase } from 'src/domain/application/use-case/delete-user';
     EncerrarChamadoController,
     AtualizacaoChamadoController,
     ListChamadosByUserController,
+    CancelarChamadoController,
     UploadAnexosController,
     // UploadAnexosMulterController
   ],
@@ -72,6 +75,7 @@ import { DeleteUserUseCase } from 'src/domain/application/use-case/delete-user';
     EncerrarChamadoUseCase,
     AtualizacaoChamadoUseCase,
     ListChamadosByUserUseCase,
+    CancelarChamadoUseCase,
     CreateAnexosUseCase,
     
   ],
