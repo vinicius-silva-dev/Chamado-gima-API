@@ -34,7 +34,17 @@ describe('Edit user e2e', () => {
       }
     })
 
-    const result = await request(app.getHttpServer()).put('/edituser').send({
+    const analista = await prisma.analista.create({
+      data: {
+        name: 'Vinicius Silva',
+        email: 'vinicius100@live.com',
+        password: await hash('123456', 6),
+        categoria: 'Analista',
+        createdAt: new Date(),
+      }
+    })
+
+    const result = await request(app.getHttpServer()).put(`/edituser/${analista.id}`).send({
       email: 'osvaldo100@live.com',
       password: '123456',
       cargo: 'aux.financeiro',
@@ -50,8 +60,10 @@ describe('Edit user e2e', () => {
     expect(result.statusCode).toBe(201)
     expect(result.body).toEqual(
       expect.objectContaining({
-        props: expect.objectContaining({
-          cargo: "aux.financeiro"
+        user: expect.objectContaining({
+          props: expect.objectContaining({
+            cargo: "aux.financeiro"
+          })
         })
         
       })

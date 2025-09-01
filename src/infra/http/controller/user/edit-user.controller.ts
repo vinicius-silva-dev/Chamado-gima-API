@@ -17,20 +17,22 @@ type User = z.infer<typeof userSchema>
 
 const bodyValidation = new ZodValidationPipe(userSchema)
 
-@Controller('/edituser')
+@Controller('/edituser/:analistaId')
 export class EditUserController {
   constructor(private editUserUseCase: EditUserUseCase) { }
 
   @Put()
   @HttpCode(201)
   async editUser(
+    @Param('analistaId') analistaId: string,
     @Body(bodyValidation) body: User,
     
   ) {
     try {
-      const { email, password } = body
+      const {email, password } = body
 
       const result = await this.editUserUseCase.execute({
+        analistaId,
         email,
         password
       })
@@ -39,8 +41,7 @@ export class EditUserController {
         throw new Error()
       }
 
-      
-      return result.user
+      return result.value
     } catch (error) {
       console.log("Deu ruim ", error)
     }
