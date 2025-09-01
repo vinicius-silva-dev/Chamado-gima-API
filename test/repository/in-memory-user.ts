@@ -6,6 +6,10 @@ export class InMemoryUser implements UserRepository{
 
   public items: User[] = [] // aqui ficará os dados salvos em memória
 
+  async findMany(): Promise<User[] | null> {
+    return this.items
+  }
+
   async findById(id: string): Promise<User | null> {
     const user = await this.items.find(item => item.id.toString() === id)
 

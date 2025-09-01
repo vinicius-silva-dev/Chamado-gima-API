@@ -39,6 +39,8 @@ import { DeleteUserController } from './controller/user/delete-user.controller';
 import { DeleteUserUseCase } from 'src/domain/application/use-case/delete-user';
 import { CancelarChamadoController } from './controller/chamados/cancelar-chamado.controller';
 import { CancelarChamadoUseCase } from 'src/domain/application/use-case/chamados/cancelar-chamado';
+import { ListUsersController } from './controller/user/list-user.controller';
+import { ListUsersUseCase } from 'src/domain/application/use-case/list-users';
 
 @Module({
   imports: [DatabaseModule, StorageModule,CryptographyModule],
@@ -47,6 +49,7 @@ import { CancelarChamadoUseCase } from 'src/domain/application/use-case/chamados
     CreateAnalistaController,
     EditUserController,
     GetUserByIdController,
+    ListUsersController,
     DeleteUserController,
     SendCodeForTheEmailController,
     AuthenticateController,
@@ -65,6 +68,7 @@ import { CancelarChamadoUseCase } from 'src/domain/application/use-case/chamados
     CreateAnalistaUseCase,
     EditUserUseCase,
     GetUserByIdUseCase,
+    ListUsersUseCase,
     DeleteUserUseCase,
     SendEmail,
     AuthenticateUseCase,

@@ -23,7 +23,7 @@ export class ListAllChamadosUseCase {
     private analistaRepository: AnalistaRepository
   ) {}
 
-  async excecute({
+  async execute({
     analistaId,
 
   }: ListAllChamadosRequest): Promise<ListAllChamadosResponse> {
